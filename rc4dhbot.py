@@ -89,7 +89,7 @@ def purge_db():
 # ██║  ██║███████╗███████╗██║            ██║   ███████╗██╔╝ ██╗   ██║   
 # ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝            ╚═╝   ╚══════╝╚═╝  ╚═╝   ╚═╝   
 #                                                                       
-HELP_TEXT = """\n<b>DINING HALL CROWD REGULATION</b>
+HELP_TEXT = """\n<b>CAPT Bot \U0001F916</b>
 
 <b>Commands on this bot:</b>
 /start : To start or restart the bot
@@ -100,10 +100,10 @@ HELP_TEXT = """\n<b>DINING HALL CROWD REGULATION</b>
 <b>Buttons and what they mean:</b>\n""" + \
             BUTTON + "<i>Enter:</i> Click this button only if you are about to enter the dining hall.\n" + \
             BUTTON + "<i>Leave:</i> Click this button if you are currently leaving the dining hall.\n" + \
-            BUTTON + "<i>Dine In:</i> To indicate if you are eating inside the dining hall. Do try to finish your food within 20-25 mins!\n" + \
+            BUTTON + "<i>Dine In:</i> To indicate if you are eating inside the dining hall. Do try to finish your food within 30-35 mins!\n" + \
             BUTTON + "<i>Takeaway:</i> To indicate that you are taking away food and not staying to eat inside the dining hall." + \
 "\n\n<b>Feedbacks / Wish to contribute?</b>" + \
-"\nContacts: @haveaqiupill, @PakornUe, @TeaR_RS, @Cpf05"
+"\nContact: @JermyTan"
 
 # ███████╗████████╗ █████╗ ██████╗ ████████╗
 # ██╔════╝╚══██╔══╝██╔══██╗██╔══██╗╚══██╔══╝
@@ -113,7 +113,7 @@ HELP_TEXT = """\n<b>DINING HALL CROWD REGULATION</b>
 # ╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   
 #                                           
 def start(update, context):
-    reply_text = "Hello! You are currently being served by the RC4 Dining Hall Regulation Bot. " + ROBOT + "\n\n"
+    reply_text = "Hello! You are currently being served by the CAPT Bot. " + ROBOT + "\nCredits to: RC4SPACE" + "\n\n"
 
     # Get current status from DB
     DINE_IN_COUNT, TAKEAWAY_COUNT = db.getCount()
@@ -132,7 +132,7 @@ def start(update, context):
     reply_text += STATUS_TEXT
     reply_text += "\n\n**************************************\n"
     reply_text += "\nHey there! Thanks for using the bot! Do you wish to dine-in or takeaway?\n\n" \
-                    + BUTTON + "Press <i>Dine-In</i> to eat inside the dining hall (limit of 25 mins)\n\n" \
+                    + BUTTON + "Press <i>Dine-In</i> to eat inside the dining hall (limit of 35 mins)\n\n" \
                     + BUTTON + "Press <i>Takeaway</i> to takeaway food with your own container (limit of 7 mins)\n\n" \
                     + BUTTON + "Press <i>Refresh</i> to get the latest crowd level!\n\n" \
                     + BUTTON + "Press <i>Help</i> if you need further assistance or to find more information :)" \
@@ -353,8 +353,8 @@ def send_final(update, context):
     elif (indicatedIntention == "DINE-IN"):
         # Add user to DB for dine-in
         db.addDineInUser(str(user.id))
-        new_job1 = context.job_queue.run_once(alarmEatIn25, 1500, context=user.id) # 1500s = 25 mins
-        new_job2 = context.job_queue.run_once(alarmEatIn20, 1200, context=user.id) # 1200s = 20 mins
+        new_job1 = context.job_queue.run_once(alarmEatIn35, 2100, context=user.id) # 2100s = 35 mins
+        new_job2 = context.job_queue.run_once(alarmEatIn30, 1800, context=user.id) # 1800s = 30 mins
         #INFOSTORE[str(user.id)] = new_job
         logger.info("Two dining in timers have started for {}".format(str(user.id)))
     else:
@@ -397,21 +397,21 @@ def leaveEarly(update, context):
 #    ██║   ██║██║ ╚═╝ ██║███████╗██║  ██║███████║
 #    ╚═╝   ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚══════╝
 #                                                
-def alarmEatIn25(context):
+def alarmEatIn35(context):
     job = context.job
     userID = job.context
 
     # encode leaving to specific user ID
     exitID = "EXITCONFIRM_" + str(userID)
 
-    EATIN_MESSAGE = "<b>Hi, you have been eating in the Dining Hall for 25 minutes. Kindly leave now, thank you for your cooperation!</b> " + RUN + RUN + RUN + "\n"
+    EATIN_MESSAGE = "<b>Hi, you have been eating in the Dining Hall for 35 minutes. Kindly leave now, thank you for your cooperation!</b> " + RUN + RUN + RUN + "\n"
 
     button_list = [InlineKeyboardButton(text='Leave Dining hall', callback_data=exitID)]
     menu = build_menu(button_list, n_cols=1, header_buttons=None, footer_buttons=None)
 
     userIn = db.checkUser(str(userID))
     if userIn:
-        logger.info("Reminder text for eatin25 has been sent to the user {}".format(str(userID)))
+        logger.info("Reminder text for eatin35 has been sent to the user {}".format(str(userID)))
         context.bot.send_message(userID,
                                 text=EATIN_MESSAGE,
                                 reply_markup=InlineKeyboardMarkup(menu),
@@ -420,16 +420,16 @@ def alarmEatIn25(context):
         logger.info("User {} has already long left the DH! Nevertheless, this job has still be executed and no reminder message is sent to the user.".format(userID))
     return 
 
-def alarmEatIn20(context):
+def alarmEatIn30(context):
     job = context.job
     userID = job.context
     exitID = "EXITCONFIRM_" + str(userID)
 
-    EATIN_MESSAGE = "<b>Hi, you have been eating in the Dining Hall for 20 minutes already. Kindly leave soon!</b> " + RUN + "\n"
+    EATIN_MESSAGE = "<b>Hi, you have been eating in the Dining Hall for 30 minutes already. Kindly leave soon!</b> " + RUN + "\n"
 
     userIn = db.checkUser(str(userID))
     if userIn:
-        logger.info("Reminder text for eatin20 has been sent to the user {}".format(str(userID)))
+        logger.info("Reminder text for eatin30 has been sent to the user {}".format(str(userID)))
         context.bot.send_message(userID,
                                 text=EATIN_MESSAGE,
                                 parse_mode=ParseMode.HTML)
@@ -499,13 +499,14 @@ def leaveFinal(update, context):
 # ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝
 #                                                                 
 def callback_reminder(context):
-    REMINDER_TEXT = WHALE + "<b>DAILY TEMPERATURE TAKING</b>" + WHALE + \
-                    "\n\nHello!! Please remember to log your temperature at https://myaces.nus.edu.sg/htd/.\n\n" + \
-                    "For those who do not have thermometers, RAs will be stationed at the " \
-                    "<b>Level 1 Main Entrance</b> on Sunday to Saturday from:\n" + \
-                    "1. 8am to 10am\n" + "2. 5.30pm to 7.30pm\n\n" + CAMERA + \
+    REMINDER_TEXT = FIRE + "<b>DAILY TEMPERATURE TAKING</b>" + FIRE + \
+                    "\n\nHello!! This is a gentle reminder to take your temperature<face>\n" + \
+                    "Log your temperature at https://myaces.nus.edu.sg/htd/.\n\n" + \
+                    "For those who do not have thermometers, you may approach the temperature taking station at the " \
+                    "<b>Level 1 Main Entrance</b> during working hours:\n" + \
+                    "Weekdays: 8.30am to 6pm\n" + "Weekends: 8.30am to 5.30pm\n\n" + CAMERA + \
                     "Remember to take a photo of your temperature readings!\n\n" + \
-                    "Last but not least, please rest well and take care during this period!!" + \
+                    "Last but not least, please drink more water, rest well and take care during this period!!" + \
                     FLEXED_BICEPS + FLEXED_BICEPS + FLEXED_BICEPS
 
     context.bot.send_message(context.job.context, text=REMINDER_TEXT, parse_mode=ParseMode.HTML)

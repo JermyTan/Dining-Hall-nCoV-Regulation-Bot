@@ -4,7 +4,7 @@ import psycopg2
 class Database:
 
     TAKEAWAY_TIME_LIMIT = '00:07'
-    DINE_IN_TIME_LIMIT = '00:25'
+    DINE_IN_TIME_LIMIT = '00:35'
 
     def __init__(self):
         DATABASE_URL = os.environ['DATABASE_URL']
