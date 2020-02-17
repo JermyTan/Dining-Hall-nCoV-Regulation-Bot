@@ -54,6 +54,7 @@ RUN = u"\U0001F3C3\U0001F3FB"
 LIGHTNING = u"\U000026A1"
 INFO = u"\U00002139"
 FIRE = u"\U0001f525"
+HAND = u"\U0001F44F"
 
 
 #  ██████╗ ██████╗ ███╗   ██╗██╗   ██╗ ██████╗     ███████╗████████╗ █████╗ ████████╗███████╗███████╗
@@ -425,7 +426,7 @@ def alarmEatIn30(context):
     userID = job.context
     exitID = "EXITCONFIRM_" + str(userID)
 
-    EATIN_MESSAGE = "<b>Hi, you have been eating in the Dining Hall for 30 minutes already. Kindly leave soon!</b> " + RUN + "\n"
+    EATIN_MESSAGE = "<b>Hi, you have been eating in the Dining Hall for 30 minutes. Kindly leave soon so others may eat!</b> " + RUN + "\n"
 
     userIn = db.checkUser(str(userID))
     if userIn:
@@ -479,7 +480,7 @@ def leaveFinal(update, context):
     log_text = "User " + str(user.id) + " has now confirmed exit from DH."
     logger.info(log_text)
 
-    reply_text = "<b>Thank you for leaving on time! Do remind your friends to do the same as well! </b>" + HAPPY
+    reply_text = "<b>Thank you for leaving on time! </b>" + HAPPY + "<b> Do remember to wash your hands as well! </b>" + HAND
     reply_text += "\n\nTo restart the bot, press /start! Press /status to check current crowd level. Press /foodtmr or /foodtoday to get daily menus!"
     context.bot.editMessageText(text=reply_text,
                                 chat_id=chatid,
